@@ -1,7 +1,7 @@
-Ứng dụng real-time detection
-Sử ngôn ngữ lập trình dart
-Framework: Flutter
-Sử dụng tensorflow lite: convert từ model yolov3-tiny và ssd_mobilenet sang tflite
+ Ứng dụng real-time detection
+#### Sử ngôn ngữ lập trình dart
+#### Framework: Flutter
+#### Sử dụng tensorflow lite: convert từ model yolov3-tiny và ssd_mobilenet sang tflite
 
 Để chạy chương trình
 Download full source code tại: https://github.com/crystalmaster/realtime-detection.git
