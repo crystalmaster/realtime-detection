@@ -1,4 +1,4 @@
- Ứng dụng real-time detection
+ ## Ứng dụng real-time detection
 #### Sử ngôn ngữ lập trình dart
 #### Framework: Flutter
 #### Sử dụng tensorflow lite: convert từ model yolov3-tiny và ssd_mobilenet sang tflite
@@ -102,9 +102,9 @@ Dùng model mới train được để test
 Run command line 
 ./darknet detect cfg/yolov2.cfg ‘filename-model-moi’.weights link_imag_test
 
-Window
+Windows 
 
-2.1.1 Download tool gán nhãn nhữ liệu tại:
+Download tool gán nhãn nhữ liệu tại:
 https://github.com/AlexeyAB/Yolo_mark
 	2.1.2 Tạo file obj.names với nội dung là label của dữ liêu, mỗi label nằm trên 1 dòng và đặt trong thư mục data
  
@@ -115,7 +115,7 @@ https://github.com/AlexeyAB/Yolo_mark
 	2.1.5 Run tool yolo mark
  ![](https://scontent.fsgn5-1.fna.fbcdn.net/v/t1.15752-9/65211909_2230935027123835_6431833879333568512_n.png?_nc_cat=101&_nc_oc=AQm2iiyt4aaL-4GsoI3RDpIVNJ2xWIhDK-h6uQbcINmMt-FAtuc0PltYystAFq8bBgyOrEnQW0xhE-Rsnp5ltX7h&_nc_ht=scontent.fsgn5-1.fna&oh=943940ca0cafb3f0d6e96ba4bd61895b&oe=5D7BF25F)
  
-2.2 Xây dựng custom object detection model
+Xây dựng custom object detection model
 
 	Đây là các bước train cho máy sử dụng GPU Nvidia (GTX950M), nếu máy không có GPU hoặc hoặc sử dụng GPU khác thì xem thêm tại[1]	
 Các bước  chuẩn bị để train custom model sử dụng darknet
@@ -129,12 +129,14 @@ a.Cấu hình môi trường như sau:
 •	GPU with CC >= 3.0: https://en.wikipedia.org/wiki/CUDA#GPUs_supported
 •	on Linux GCC or Clang, on Windows MSVC 2015/2017/2019 https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community 
 b. Compile darknet
+
 b1. Cài đặt biến môi trường CUDA, cuCNN như hình sau:
- 
 b2.Copy 2 file opencv_world410.dll và opencv_ffmpeg410_64.dll vào thư mục darknet.
 b3. Mở project darknet.sln bằng vs 2017, thiết đặt X64 và  Build với Release mode.
 b4. Chọn build → build darknet
+
 Phần 2: Tạo file cfg và tiến hành train
+
 b1. Download pre-trained weights for the convolutional layers :
 và đặt tại thư mục darknet/x64
 b2. Tạo file yolov3-tiny-obj.cfg giống với file yolov3-tiny.cfg và thay đổi một số line:
@@ -144,13 +146,16 @@ b2. Tạo file yolov3-tiny-obj.cfg giống với file yolov3-tiny.cfg và thay �
 •	steps = 80%  90% của max_batches, ví dụ max_batches = 6000 thì  steps=4800,5400
 •	classes=80 đổi thành classes = số lớp cần detect.
 •	[filters=255] đổi thành filters=(classes + 5)x3 
+
 b3. Train model bằng lệnh: darknet.exe detector train data/obj.data yolov3-tiny-obj.cfg yolov3-tiny.conv.15
 Model đã sẽ được lưu thành yolov3-tiny-obj_last.weights sau mỗi 100 interations và yolov3-tiny-obj_xxxx.weights sau mỗi 1000 interations.
 Sau khi train xong, model sẽ được lưu ở đường dẫn darknet\x64\backup\
 Có thể tạm ngưng train sau 100 interations và tiếp tục train lại bằng câu lệnh sau: darknet.exe detector train data/obj.data yolov3-tiny-obj.cfg backup/yolov3-tiny-obj_last.weight
-2.3 Convert yolo modal thành tensorflow lite model (.weights to .lite) (thực hiện trên mac OS) 
+
+Convert yolo modal thành tensorflow lite model (.weights to .lite) (thực hiện trên mac OS) 
 	Tensorflow chỉ hỗ trợ convert model .pb (tensorflow model) sang .lite, vì vậy trước tiên phải convert .weight model sang .pb model bằng darkflow 
-2.3.1 Clone darkflow và cài đặt: https://github.com/thtrieu/darkflow
+
+Clone darkflow và cài đặt: https://github.com/thtrieu/darkflow
 	Và cài đặt như sau:
 	cd darkflow
 sed -i -e 's/self.offset = 16/self.offset = 20/g' darkflow/utils/loader.py
@@ -160,7 +165,8 @@ pip install .
 	2.3.2 Sao chép 3 file yolov3-tiny-obj_last.weights, yolov3-tiny-obj.cfg,  vào thư mục darkflow. Mở terminal và chạy lệnh:
 	flow --model yolov3-tiny-obj.cfg --load yolov3-tiny-obj_last.weights --savepb
 	Sau khi complete, ta sẽ có được model yolov3-tiny-obj_last.pb và file model yolov3-tiny-obj_last.meta ở thư mục build_graph
-2.3.3 Convert yolov3-tiny-obj_last.pb sang yolov3-tiny-obj_last.lite bằng lệnh:
+
+Convert yolov3-tiny-obj_last.pb sang yolov3-tiny-obj_last.lite bằng lệnh:
 tflite_convert \
   --graph_def_file=built_graph/yolov2-tiny.pb \
   --output_file=built_graph/yolov2_graph.lite \
@@ -171,4 +177,4 @@ tflite_convert \
   --output_array=output \
   --inference_type=FLOAT \
   --input_data_type=FLOAT
-Sau khi complete, ta sẽ có được model yolov3-tiny-obj_last.lite, 
+Sau khi complete, ta sẽ có được model yolov3-tiny-obj_last.lite
